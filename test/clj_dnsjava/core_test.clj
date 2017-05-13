@@ -33,3 +33,8 @@
   (testing "google"
     (is (match-return-types (ns-lookup :txt "google.com") :txt))
     ))
+
+(deftest cname-records
+  (testing "amazon"
+    (is (match-return-types (ns-lookup "www.amazon.com" :cname) :cname))
+    ))

@@ -111,11 +111,22 @@
   (convert [o] (assoc (convert-rec o)
                       :address (.getHostAddress (.getAddress o)))))
 
+(extend-type CNAMERecord
+  ConvertibleToKWHashProtocol
+  (convert [o] (assoc (convert-rec o)
+                      :alias (.toString (.getAlias o))
+                      :target (.toString (.getTarget o)))))
+
 (extend-type MXRecord
   ConvertibleToKWHashProtocol
   (convert [o] (assoc (convert-rec o)
                       :addl-name (.toString (.getAdditionalName o))
                       :priority (.getPriority o)
+                      :target (.toString (.getTarget o)))))
+
+(extend-type PTRRecord
+  ConvertibleToKWHashProtocol
+  (convert [o] (assoc (convert-rec o)
                       :target (.toString (.getTarget o)))))
 
 (extend-type SOARecord
