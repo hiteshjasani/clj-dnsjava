@@ -92,7 +92,7 @@
      (.invoke m java-obj nil))))
 
 (defn convert-rec
-  [rec]
+  [^Record rec]
   (let [rec-type (get-kw-from-lookup-type (.getType rec))
         address  ()]
     {:type rec-type #_:class #_ (class rec) :name (.toString (.getName rec)) :ttl (.getTTL rec)}))
@@ -156,7 +156,7 @@
     (println (str (convert-rec rec)))))
 
 (defn lookup-impl
-  [look-type domain]
+  [^long look-type ^String domain]
   (.run (Lookup. domain look-type)))
 
 ;;(ns-unmap *ns* 'ns-lookup)              ; Enable reload of multi def in REPL
