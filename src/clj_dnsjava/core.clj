@@ -1,11 +1,10 @@
 (ns clj-dnsjava.core
-;;  (:use [clojure.core :exclude [find]])
+  (:require [clojure.pprint :as pp])
   (:import
    (java.net InetAddress Inet4Address Inet6Address)
-   (org.xbill.DNS Name Zone Record Type Master DClass Address Message SimpleResolver SOARecord NSRecord DSRecord
-                  CNAMERecord TXTRecord ARecord AAAARecord MXRecord PTRRecord Lookup ReverseMap RRset)
-   )
-  )
+   (org.xbill.DNS Type Lookup
+                  Record ARecord AAAARecord CNAMERecord DSRecord MXRecord NSRecord PTRRecord SOARecord TXTRecord TXTBase)
+   ))
 
 (def keyword-type
   [[:a Type/A]
@@ -80,35 +79,47 @@
   [^Integer look-type]
   (get type-keyword-table look-type))
 
+(defn invoke-protected-method
+  "Hack to work around https://dev.clojure.org/jira/browse/CLJ-1243"
+  ([java-obj meth-name]
+   (let [m (.getDeclaredMethod (class java-obj) meth-name (into-array Class []))]
+     (.setAccessible m true)
+     (.invoke m java-obj nil)))
+
+  ([klass java-obj meth-name]
+   (let [m (.getDeclaredMethod klass meth-name (into-array Class []))]
+     (.setAccessible m true)
+     (.invoke m java-obj nil))))
+
 (defn convert-rec
   [rec]
   (let [rec-type (get-kw-from-lookup-type (.getType rec))
         address  ()]
     {:type rec-type #_:class #_ (class rec) :name (.toString (.getName rec)) :ttl (.getTTL rec)}))
 
-(defprotocol KWHashProtocol
-  "Make a class behave like a keyword hash"
-  (convert [a] "Convert a class to a keyword hash with all public fields"))
+(defprotocol ConvertibleToKWHashProtocol
+  "Convertible to a keyword hash"
+  (convert [a] "Convert data type to a keyword hash"))
 
 (extend-type ARecord
-  KWHashProtocol
+  ConvertibleToKWHashProtocol
   (convert [o] (assoc (convert-rec o)
                       :address (.getHostAddress (.getAddress o)))))
 
 (extend-type AAAARecord
-  KWHashProtocol
+  ConvertibleToKWHashProtocol
   (convert [o] (assoc (convert-rec o)
                       :address (.getHostAddress (.getAddress o)))))
 
 (extend-type MXRecord
-  KWHashProtocol
+  ConvertibleToKWHashProtocol
   (convert [o] (assoc (convert-rec o)
                       :addl-name (.toString (.getAdditionalName o))
                       :priority (.getPriority o)
                       :target (.toString (.getTarget o)))))
 
 (extend-type SOARecord
-  KWHashProtocol
+  ConvertibleToKWHashProtocol
   (convert [o] (assoc (convert-rec o)
                       :admin (.toString (.getAdmin o))
                       :expire (.getExpire o)
@@ -118,8 +129,13 @@
                       :retry (.getRetry o)
                       :serial (.getSerial o))))
 
+(extend-type TXTRecord
+  ConvertibleToKWHashProtocol
+  (convert [o] (assoc (convert-rec o)
+                      :strings (invoke-protected-method TXTBase o "getStrings"))))
+
 (extend-type Record
-  KWHashProtocol
+  ConvertibleToKWHashProtocol
   (convert [o] (convert-rec o)))
 
 (defn print-recs

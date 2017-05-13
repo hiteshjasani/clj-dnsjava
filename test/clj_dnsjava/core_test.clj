@@ -11,20 +11,25 @@
 
 (deftest flexible-arg-order
   (testing "domain"
-    (is (match-return-types (map convert (ns-lookup "google.com")) :a))
-    (is (not (match-return-types (map convert (ns-lookup "google.com")) :aaaa))))
+    (is (match-return-types (ns-lookup "google.com") :a))
+    (is (not (match-return-types (ns-lookup "google.com") :aaaa))))
 
   (testing "lookup type and domain"
-    (is (match-return-types (map convert (ns-lookup Type/A "google.com")) :a))
-    (is (match-return-types (map convert (ns-lookup Type/MX "google.com")) :mx))
-    (is (match-return-types (map convert (ns-lookup "google.com" Type/A)) :a))
-    (is (match-return-types (map convert (ns-lookup "google.com" Type/MX)) :mx))
+    (is (match-return-types (ns-lookup Type/A "google.com") :a))
+    (is (match-return-types (ns-lookup Type/MX "google.com") :mx))
+    (is (match-return-types (ns-lookup "google.com" Type/A) :a))
+    (is (match-return-types (ns-lookup "google.com" Type/MX) :mx))
     )
+
   (testing "keyword type and domain"
-    (is (match-return-types (map convert (ns-lookup :a "google.com")) :a))
-    (is (match-return-types (map convert (ns-lookup :mx "google.com")) :mx))
-    (is (match-return-types (map convert (ns-lookup "google.com" :a)) :a))
-    (is (match-return-types (map convert (ns-lookup "google.com" :mx)) :mx))
+    (is (match-return-types (ns-lookup :a "google.com") :a))
+    (is (match-return-types (ns-lookup :mx "google.com") :mx))
+    (is (match-return-types (ns-lookup "google.com" :a) :a))
+    (is (match-return-types (ns-lookup "google.com" :mx) :mx))
     )
   )
 
+(deftest text-records
+  (testing "google"
+    (is (match-return-types (ns-lookup :txt "google.com") :txt))
+    ))
