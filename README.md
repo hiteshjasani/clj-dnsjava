@@ -30,6 +30,10 @@ A Clojure library that wraps dnsjava with a better api.
 |   :mx | google.com. |  492 | alt4.aspmx.l.google.com. |        50 | alt4.aspmx.l.google.com. |
 |   :mx | google.com. |  492 | alt1.aspmx.l.google.com. |        20 | alt1.aspmx.l.google.com. |
 
+
+;; reverse lookup
+(rev-lookup "8.8.8.8")
+=> "google-public-dns-a.google.com."
 ```
 
 ## License

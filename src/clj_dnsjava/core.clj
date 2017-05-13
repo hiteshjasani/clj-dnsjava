@@ -2,8 +2,9 @@
   (:require [clojure.pprint :as pp])
   (:import
    (java.net InetAddress Inet4Address Inet6Address)
-   (org.xbill.DNS Type Lookup
+   (org.xbill.DNS Address Type Lookup
                   Record ARecord AAAARecord CNAMERecord DSRecord MXRecord NSRecord PTRRecord SOARecord TXTRecord TXTBase)
+   (org.xbill.DNS.spi DNSJavaNameServiceDescriptor DNSJavaNameService)
    ))
 
 (def keyword-type
@@ -194,3 +195,13 @@
 
 (defmethod ns-lookup [clojure.lang.Keyword String] [kw-look-type domain]
   (mapv convert (lookup-impl (get-lookup-type kw-look-type) domain)))
+
+(def dns-service (.createNameService (DNSJavaNameServiceDescriptor.)))
+
+(defn rev-lookup
+  "Lookup hostname by ip address
+
+   (rev-lookup \"8.8.8.8\")
+  "
+  [^String ip-address]
+  (.getHostByAddr dns-service (.getAddress (Address/getByAddress ip-address))))

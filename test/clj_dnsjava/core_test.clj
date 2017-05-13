@@ -38,3 +38,8 @@
   (testing "amazon"
     (is (match-return-types (ns-lookup "www.amazon.com" :cname) :cname))
     ))
+
+(deftest reverse-lookup
+  (testing "google"
+    (is (= "google-public-dns-a.google.com." (rev-lookup "8.8.8.8")))
+    ))
