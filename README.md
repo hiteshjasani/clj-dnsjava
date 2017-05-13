@@ -32,7 +32,10 @@ A Clojure library that wraps dnsjava with a better api.
 
 
 ;; reverse lookup
-(rev-lookup "8.8.8.8")
+(dns/rev-lookup "8.8.8.8")
+=> "google-public-dns-a.google.com."
+
+(dns/rev-lookup "2001:4860:4860:0:0:0:0:8888")
 => "google-public-dns-a.google.com."
 ```
 
