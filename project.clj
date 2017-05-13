@@ -1,4 +1,4 @@
-(defproject org.jasani/clj-dnsjava "0.1.0-SNAPSHOT"
+(defproject org.jasani/clj-dnsjava "0.1.0"
   :description "Clojure wrapper to dnsjava"
   :url "https://github.com/hiteshjasani/clj-dnsjava"
   :license {:name "Eclipse Public License"
