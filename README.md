@@ -2,6 +2,9 @@
 
 A Clojure library that wraps dnsjava with a better api.
 
+[![Clojars Project](https://img.shields.io/clojars/v/org.jasani/clj-dnsjava.svg)](https://clojars.org/org.jasani/clj-dnsjava)
+
+
 ## Usage
 
 
@@ -17,9 +20,15 @@ A Clojure library that wraps dnsjava with a better api.
 => [{:type :aaaa, :name "google.com.", :ttl 298, :address "2607:f8b0:4004:80c:0:0:0:200e"}]
 
 ;; supports different order for args
-(dns/ns-lookup :mx "google.com")
-=> [{:type :mx, :name "google.com.", :ttl 600, :addl-name "alt3.aspmx.l.google.com.", :priority 40, :target "alt3.aspmx.l.google.com."} {:type :mx, :name "google.com.", :ttl 600, :addl-name "alt1.aspmx.l.google.com.", :priority 20, :target "alt1.aspmx.l.google.com."} {:type :mx, :name "google.com.", :ttl 600, :addl-name "aspmx.l.google.com.", :priority 10, :target "aspmx.l.google.com."} {:type :mx, :name "google.com.", :ttl 600, :addl-name "alt2.aspmx.l.google.com.", :priority 30, :target "alt2.aspmx.l.google.com."} {:type :mx, :name "google.com.", :ttl 600, :addl-name "alt4.aspmx.l.google.com.", :priority 50, :target "alt4.aspmx.l.google.com."}]
-
+(clojure.pprint/print-table (dns/ns-lookup :mx "google.com"))
+=>
+| :type |       :name | :ttl |               :addl-name | :priority |                  :target |
+|-------+-------------+------+--------------------------+-----------+--------------------------|
+|   :mx | google.com. |  492 | alt2.aspmx.l.google.com. |        30 | alt2.aspmx.l.google.com. |
+|   :mx | google.com. |  492 |      aspmx.l.google.com. |        10 |      aspmx.l.google.com. |
+|   :mx | google.com. |  492 | alt3.aspmx.l.google.com. |        40 | alt3.aspmx.l.google.com. |
+|   :mx | google.com. |  492 | alt4.aspmx.l.google.com. |        50 | alt4.aspmx.l.google.com. |
+|   :mx | google.com. |  492 | alt1.aspmx.l.google.com. |        20 | alt1.aspmx.l.google.com. |
 
 ```
 
